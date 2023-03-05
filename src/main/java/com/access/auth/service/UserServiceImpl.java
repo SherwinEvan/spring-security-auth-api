@@ -1,6 +1,7 @@
 package com.access.auth.service;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,5 +64,16 @@ public class UserServiceImpl implements UserService {
 		userRepo.save(user);
 
 		return true;
+	}
+
+	@Override
+	public VerificationToken generateNewVerificationToken(String oldToken) {
+		
+		VerificationToken verificationToken = verficationTokenRepo.findByToken(oldToken);
+		
+		verificationToken.setToken(UUID.randomUUID().toString());
+		verficationTokenRepo.save(verificationToken);
+		
+		return verificationToken;
 	}
 }
