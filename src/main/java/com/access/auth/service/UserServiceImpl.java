@@ -1,15 +1,18 @@
 package com.access.auth.service;
 
 import java.util.Calendar;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.access.auth.entities.PasswordResetToken;
 import com.access.auth.entities.User;
 import com.access.auth.entities.VerificationToken;
 import com.access.auth.models.UserModel;
+import com.access.auth.repositories.PasswordResetTokenRepo;
 import com.access.auth.repositories.UserRepo;
 import com.access.auth.repositories.VerificationTokenRepo;
 
@@ -22,6 +25,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private VerificationTokenRepo verficationTokenRepo;
 
+	@Autowired
+	private PasswordResetTokenRepo passwordResetTokenRepo;
+	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -75,5 +81,48 @@ public class UserServiceImpl implements UserService {
 		verficationTokenRepo.save(verificationToken);
 		
 		return verificationToken;
+	}
+
+	@Override
+	public User findUserByEmail(String email) {
+		return userRepo.findByEmail(email);
+	}
+
+	@Override
+	public void createPasswordResetTokenForUser(User user, String token) {
+		PasswordResetToken passwordResetToken = new PasswordResetToken(user, token);
+		passwordResetTokenRepo.save(passwordResetToken);
+		
+	}
+
+	@Override
+	public boolean validatePasswordResetToken(String token) {
+		PasswordResetToken passwordResetToken = passwordResetTokenRepo.findByToken(token);
+
+		if (passwordResetToken == null)
+			return false;
+
+		User user = passwordResetToken.getUser();
+		Calendar cal = Calendar.getInstance();
+
+		if (passwordResetToken.getExpirationTime().getTime() - cal.getTime().getTime() <= 0) {
+			passwordResetTokenRepo.delete(passwordResetToken);
+			return false;
+		}
+		
+		return true;
+	}
+
+	@Override
+	public Optional<User> getUserByPasswordResetToken(String token) {
+		
+		return Optional.ofNullable(passwordResetTokenRepo.findByToken(token).getUser());
+	}
+
+	@Override
+	public void changePassword(User user, String newPassword) {
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepo.save(user);
+		
 	}
 }

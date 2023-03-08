@@ -1,5 +1,6 @@
 package com.access.auth.controller;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,24 @@ public class Controller {
 			userService.createPasswordResetTokenForUser(user, token);
 			url = passwordResetTokenMail(user, applicationUrl(request), token);
 		}
+		return url; 
+	}
+	
+	@PostMapping("/savePassword")
+	public String savePassword(@RequestParam String token, @RequestBody PasswordModel passwordModel) {
+		boolean result = userService.validatePasswordResetToken(token);
+		
+		if(result == false) {
+			return "Bad token";
+			}
+		Optional<User> user = userService.getUserByPasswordResetToken(token);
+		
+		if(user.isPresent()) {
+			userService.changePassword(user.get(), passwordModel.getNewPassword());
+			return "Password Reset Successfully!";
+		}
+		
+		return "Bad token";
 	}
 
 	private String passwordResetTokenMail(User user, String applicationUrl, String token) {
