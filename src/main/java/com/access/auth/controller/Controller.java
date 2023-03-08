@@ -1,5 +1,7 @@
 package com.access.auth.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.access.auth.entities.User;
 import com.access.auth.entities.VerificationToken;
 import com.access.auth.event.RegistrationCompleteEvent;
+import com.access.auth.models.PasswordModel;
 import com.access.auth.models.UserModel;
 import com.access.auth.service.UserService;
 
@@ -59,6 +62,25 @@ public class Controller {
 		User user = verificationToken.getUser();
 		resendVerificationToken(user, applicationUrl(request), verificationToken);
 		return "Verification Link Sent";
+	}
+	
+	@PostMapping("/resetPassword")
+	public String resetPassword(@RequestBody PasswordModel passwordModel, HttpServletRequest request) {
+		User user = userService.findUserByEmail(passwordModel.getEmail());
+		String url = "";
+		if(user != null) {
+			String token = UUID.randomUUID().toString();
+			userService.createPasswordResetTokenForUser(user, token);
+			url = passwordResetTokenMail(user, applicationUrl(request), token);
+		}
+	}
+
+	private String passwordResetTokenMail(User user, String applicationUrl, String token) {
+		String url = applicationUrl + "/savePassword?token=" + token;
+
+		log.info("Click the link to reset password : {}", url);
+		
+		return url;
 	}
 
 	private String applicationUrl(HttpServletRequest request) {
