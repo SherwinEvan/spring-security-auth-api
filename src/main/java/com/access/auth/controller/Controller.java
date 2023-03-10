@@ -93,6 +93,18 @@ public class Controller {
 		
 		return "Bad token";
 	}
+	
+	@PostMapping("/changePassword")
+	public String changePassword(@RequestBody PasswordModel passwordModel) {
+		User user = userService.findUserByEmail(passwordModel.getEmail());
+		
+		if(!userService.checkIfValidOldPassword(user, passwordModel.getOldPassword())) {
+			return "Invalid Old Password";
+		}
+		
+		userService.changePassword(user, passwordModel.getNewPassword());
+		return "Password Change Successfully";
+	}
 
 	private String passwordResetTokenMail(User user, String applicationUrl, String token) {
 		String url = applicationUrl + "/savePassword?token=" + token;
