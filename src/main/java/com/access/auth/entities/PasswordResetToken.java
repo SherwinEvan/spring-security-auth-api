@@ -34,9 +34,9 @@ public class PasswordResetToken {
     @JoinColumn(name = "user_id",
             nullable = false, 
             foreignKey = @ForeignKey(name = "FK_USER_PASSWORD_TOKEN"))
-    private User user;
+    private UserEntity user;
 
-    public PasswordResetToken(User user, String token) {
+    public PasswordResetToken(UserEntity user, String token) {
         super();
         this.token = token;
         this.user = user;

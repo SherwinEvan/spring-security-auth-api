@@ -1,4 +1,4 @@
-package com.access.auth.service;
+package com.access.auth.signupservice;
 
 import java.util.Calendar;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.access.auth.entities.PasswordResetToken;
-import com.access.auth.entities.User;
+import com.access.auth.entities.UserEntity;
 import com.access.auth.entities.VerificationToken;
 import com.access.auth.models.UserModel;
 import com.access.auth.repositories.PasswordResetTokenRepo;
@@ -31,8 +31,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public User registerUser(UserModel userModel) {
-		User user = new User();
+	public UserEntity registerUser(UserModel userModel) {
+		UserEntity user = new UserEntity();
 
 		user.setUserName(userModel.getUserName());
 		user.setEmail(userModel.getEmail());
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void saveVerificationTokenForUser(String token, User user) {
+	public void saveVerificationTokenForUser(String token, UserEntity user) {
 		VerificationToken verificationToken = new VerificationToken(user, token);
 
 		verficationTokenRepo.save(verificationToken);
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 		if (verificationToken == null)
 			return false;
 
-		User user = verificationToken.getUser();
+		UserEntity user = verificationToken.getUser();
 		Calendar cal = Calendar.getInstance();
 
 		if (verificationToken.getExpirationTime().getTime() - cal.getTime().getTime() <= 0) {
@@ -84,12 +84,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findUserByEmail(String email) {
+	public UserEntity findUserByEmail(String email) {
 		return userRepo.findByEmail(email);
 	}
 
 	@Override
-	public void createPasswordResetTokenForUser(User user, String token) {
+	public void createPasswordResetTokenForUser(UserEntity user, String token) {
 		PasswordResetToken passwordResetToken = new PasswordResetToken(user, token);
 		passwordResetTokenRepo.save(passwordResetToken);
 		
@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
 		if (passwordResetToken == null)
 			return false;
 
-		User user = passwordResetToken.getUser();
+		UserEntity user = passwordResetToken.getUser();
 		Calendar cal = Calendar.getInstance();
 
 		if (passwordResetToken.getExpirationTime().getTime() - cal.getTime().getTime() <= 0) {
@@ -114,20 +114,20 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<User> getUserByPasswordResetToken(String token) {
+	public Optional<UserEntity> getUserByPasswordResetToken(String token) {
 		
 		return Optional.ofNullable(passwordResetTokenRepo.findByToken(token).getUser());
 	}
 
 	@Override
-	public void changePassword(User user, String newPassword) {
+	public void changePassword(UserEntity user, String newPassword) {
 		user.setPassword(passwordEncoder.encode(newPassword));
 		userRepo.save(user);
 		
 	}
 
 	@Override
-	public boolean checkIfValidOldPassword(User user, String oldPassword) {
+	public boolean checkIfValidOldPassword(UserEntity user, String oldPassword) {
 		return passwordEncoder.matches(oldPassword, user.getPassword());
 	}
 }

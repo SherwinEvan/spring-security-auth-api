@@ -2,7 +2,7 @@ package com.access.auth.event;
 
 import org.springframework.context.ApplicationEvent;
 
-import com.access.auth.entities.User;
+import com.access.auth.entities.UserEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,16 +11,16 @@ import lombok.Setter;
 @Setter
 public class RegistrationCompleteEvent extends ApplicationEvent {
 
-	private User user;
+	private UserEntity user;
 	private String applicationUrl;
 
-	public RegistrationCompleteEvent(User user, String applicationUrl) {
+	public RegistrationCompleteEvent(UserEntity user, String applicationUrl) {
 		super(user);
 		this.user = user;
 		this.applicationUrl = applicationUrl;
 	}
 
-	public User getUser() {
+	public UserEntity getUser() {
 		return this.user;
 	}
 
@@ -32,7 +32,7 @@ public class RegistrationCompleteEvent extends ApplicationEvent {
 		this.applicationUrl = applicationUrl;
 	}
 
-	public void setUser(User user) {
+	public void setUser(UserEntity user) {
 		this.user = user;
 	}
 
