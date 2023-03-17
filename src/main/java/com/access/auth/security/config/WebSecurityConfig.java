@@ -31,6 +31,18 @@ public class WebSecurityConfig {
 	};
 
 	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		return http
+				.cors(Customizer.withDefaults())
+				.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(WHITE_LIST_URL).permitAll()
+						.anyRequest().authenticated()
+						)
+				.build();
+	}
+	
+	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(11);
 	}
@@ -44,16 +56,5 @@ public class WebSecurityConfig {
 	                        .build()
 	        );
 	    }
-	
-	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http
-				.cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(WHITE_LIST_URL).permitAll()
-                        .anyRequest().authenticated()
-                )
-				.build();
-	}
 }
+	
