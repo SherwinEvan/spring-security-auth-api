@@ -31,6 +31,12 @@ public class Controller {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 
+	@GetMapping
+	public String land() {
+		return "Hello!";
+	}
+
+	
 	@GetMapping("/test")
 	public String test() {
 		return "Hello! This is a test.";
