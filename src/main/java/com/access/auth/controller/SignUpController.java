@@ -58,7 +58,7 @@ public class SignUpController {
 		boolean validity = userService.validateVerificationToken(token);
 
 		if (validity) {
-			return "UserEntity verified successfully!";
+			return "User verified successfully!";
 		}
 
 		return "Bad token request";

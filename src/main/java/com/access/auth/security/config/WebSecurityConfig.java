@@ -44,9 +44,8 @@ public class WebSecurityConfig {
 	private RSAKey rsaKeys;
 	
 	private static final String[] WHITE_LIST_URL = {
+			"/signup/",
 			"/signup/test",
-			"/signup/login",
-			"/signup/signup",
 			"/signup/verifyRegistration",
 			"/signup/resendVerificationLink*",
 			"/signup/resetPassword",
