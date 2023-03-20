@@ -130,4 +130,9 @@ public class UserServiceImpl implements UserService {
 	public boolean checkIfValidOldPassword(UserEntity user, String oldPassword) {
 		return passwordEncoder.matches(oldPassword, user.getPassword());
 	}
+
+	@Override
+	public String getTokenByUser(UserEntity user) {
+		return verficationTokenRepo.findByUser(user).getToken();
+	}
 }

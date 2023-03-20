@@ -51,7 +51,7 @@ public class WebSecurityConfig {
 			"/signup/resetPassword",
 			"/signup/savePassword*",
 			"/signup/changePassword",
-			"/login/token"
+			"/login/"
 	};
 
 	@Bean 

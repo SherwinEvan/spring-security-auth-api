@@ -33,7 +33,7 @@ public class LoginController {
 		this.userRepo = userRepo;
 	}
 
-	@PostMapping("/token")
+	@PostMapping("/")
 	public String token(@RequestBody UserModel loginUser) {
 		
 		UserEntity userEntity = userRepo.findByUserName(loginUser.getUserName());

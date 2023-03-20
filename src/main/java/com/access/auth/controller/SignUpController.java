@@ -47,17 +47,24 @@ public class SignUpController {
 	@PostMapping("/")
 	public String registerUser(@RequestBody UserModel userModel, final HttpServletRequest request) {
 		UserEntity user = userService.registerUser(userModel);
+		
+		RegistrationCompleteEvent registrationCompleteEvent = new RegistrationCompleteEvent(user, applicationUrl(request));
 
-		publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
-
-		return "Success";
+		publisher.publishEvent(registrationCompleteEvent);
+		
+		String url = registrationCompleteEvent.getApplicationUrl() + "/signup/verifyRegistration?token=" + userService.getTokenByUser(user);
+		
+		if(url != null)
+			return url;
+		
+		return "Error";
 	}
 
 	@GetMapping("/verifyRegistration")
 	public String verifyRegistration(@RequestParam("token") String token) {
 		boolean validity = userService.validateVerificationToken(token);
 
-		if (validity) {
+		if(validity) {
 			return "User verified successfully!";
 		}
 

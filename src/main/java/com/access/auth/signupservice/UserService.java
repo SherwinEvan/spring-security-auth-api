@@ -33,4 +33,7 @@ public interface UserService {
 	public void changePassword(UserEntity user, String newPassword);
 
 	public boolean checkIfValidOldPassword(UserEntity user, String oldPassword);
+	
+	public String getTokenByUser(UserEntity User);
 }
+
